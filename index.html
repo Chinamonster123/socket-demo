@@ -53,6 +53,13 @@
       #messages > li:nth-child(odd) {
         background: #efefef;
       }
+
+      #span {
+        position: fixed;
+        bottom: 50px;
+        right: 50px;
+      }
+
     </style>
   </head>
   <body>
@@ -60,6 +67,7 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+    <span id="span">当前在线人数：0</span>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
@@ -67,6 +75,7 @@
       var messages = document.getElementById("messages");
       var form = document.getElementById("form");
       var input = document.getElementById("input");
+      var span = document.getElementById("span");
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -81,6 +90,26 @@
         item.textContent = msg;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      socket.on("in", function (msg) {
+        var item = document.createElement("li");
+        item.textContent = msg;
+        item.style.color = "green";
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      socket.on("out", function (msg) {
+        var item = document.createElement("li");
+        item.textContent = msg;
+        item.style.color = "red";
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      socket.on("online", function (msg) {
+        span.innerHTML = "当前在线人数：" + msg;
       });
     </script>
   </body>
